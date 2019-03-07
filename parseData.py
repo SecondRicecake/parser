@@ -6,14 +6,14 @@ from plumbum import local
 #from plumbum.cmd import grep
 
 
-myPATH = 'D:/Case/UN43NU7150_ChipOff_20181114-20181208T023211Z-001/UN43NU7150_ChipOff_20181114' #input("Folder Path: ")
+myPATH = 'D:/' #input("Folder Path: ")
 
 #print(glob.glob(myPATH+'/*.txt'))
 myFILES =glob.glob(myPATH+'/*.mdf') #List of all mdf files in myPATH folder
 searchPattern =['http','https']
 
-strings = local["C:/Program Files (x86)/GnuWin32/bin/strings.exe"] #loc of my strings.exe
-grep = local["C:/Program Files (x86)/GnuWin32/bin/grep.exe"]
+strings = local["C:/"] #loc of my strings.exe
+grep = local["C:/"]
 
 files_count = len(myFILES)
 print('Number of files to parse: ' + str(files_count))
@@ -27,7 +27,7 @@ for myfile in myFILES: #for each file in the folder
     for search in searchPattern: #for each search word in searchPattern
         command = strings[myfile] | grep[search] #command to cmd
         s = re.sub(r'[^A-Za-z]+','', search) #strips all non alphabet from search
-        myfName = 'C:/Users/Suz/Desktop/results/'+fn+'_'+s+'.txt'
+        myfName = 'C:/.../results/'+fn+'_'+s+'.txt'
         while True:
             try:
                 (command > myfName)() #execute command; output to [filename][search word].txt 
