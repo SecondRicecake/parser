@@ -1,4 +1,13 @@
-#!/usr/bin/python3
+'''
+-parse through files in folder [V]
+-search script, exe files, output folder in same directory as script [v]
+-output in text [v]
+-errors in text [v]
+-get offset [-]
+-parse using binary headers [-]
+-avoid NOT RESPONDING [-]
+'''
+
 from tkinter import * 
 from tkinter import filedialog
 import tkinter.ttk as ttk
@@ -47,7 +56,8 @@ class MyGUI:
 
         self.searchPattern =[]
         self.user_filepath = ''
-        self.new_path = '/myOUTPUT'
+        self.script_filepath = sys.path[0]
+        self.new_path = os.path.join(self.script_filepath, "myOUTPUT")
 
  
     def sel_folder(self):
@@ -55,13 +65,14 @@ class MyGUI:
         self.user_filepath = filedialog.askdirectory(parent=root, initialdir=currdir, title='Please select a directory')
         self.folderLabel.config(text=self.user_filepath)
 
+
     def sel_file(self):
         currdir = os.getcwd()
         self.user_filepath= filedialog.askopenfilename(parent=root, initialdir=currdir, title='Please select a directory')
         self.folderLabel.config(text=self.user_filepath)
 
     def get_searchkey(self):
-        tempfile = filedialog.askopenfilename(parent=root, initialdir='/searchScript', title='Please select a text file', filetypes=[('text file','*.txt')])
+        tempfile = filedialog.askopenfilename(parent=root, initialdir=os.path.join(self.script_filepath, "searchScript"), title='Please select a text file', filetypes=[('text file','*.txt')])
         if tempfile:
             print(tempfile) 
             self.searchScriptLabel.config(text=tempfile)
@@ -75,20 +86,23 @@ class MyGUI:
             os.makedirs(self.new_path)
 
     def begin_search(self):
-        myFiles = glob.glob(self.user_filepath)
-        print(myFiles)
+        myFiles = glob.glob(self.user_filepath+'/*.*')
+        #print("Name of folder/files:"+str(myFiles))
         files_count = len(myFiles)
+        print("num of files: "+str(files_count))
         err_count = 0
         suc_count = 0
-        grep = local["/tools/grep.exe"]
-        strings = local["/tools/strings.exe"]
+        grep = local[os.path.join(self.script_filepath,"tools/grep.exe")]
+        strings = local[os.path.join(self.script_filepath,"tools/strings.exe")]
         self.make_dir()
         for myfile in myFiles:
+            #print(myfile)
             fn = os.path.basename(myfile)           
             print("Processing through "+fn+"...")
             for search in self.searchPattern:
                 print("Looking for search word: "+search+"...")
                 command = strings[myfile] | grep[search]
+                #print("gave command: "+str(command))
                 s = re.sub(r'[^A-Za-z0-9]+','', search) #strips all non alphabet from search
                 myfName = self.new_path+'/'+fn+'_'+s+'.txt'            
                 while True:
